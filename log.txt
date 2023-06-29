@@ -1,0 +1,6 @@
+
+1688051435826 : ::1 : GET : /api/users
+1688051521895 : ::1 : POST : /api/users
+1688051551766 : ::1 : PATCH : /api/users/1001
+1688051556677 : ::1 : PATCH : /api/users/1002
+1688051564069 : ::1 : PATCH : /api/users/1000

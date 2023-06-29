@@ -65,7 +65,30 @@ const app = express();
 const PORT = 8000;
 
 // Middleware - Plugin
+// Execute any code
+// Make changes to the request and the response objects
+// End the request response cycle
+// Call the next middleware function in the stack
+
 app.use(express.urlencoded({ extended: false }));
+
+app.use((req, res, next) => {
+  // console.log("Hello from MiddleWare 1");
+  // return res.end("Hey");
+  // req.myUserName = 'Eagle_Vector';
+  fs.appendFile("log.txt", `\n${Date.now()} : ${req.ip} : ${req.method} : ${req.path}`, (err, data) => {
+    next();
+  })
+});
+
+app.use((req, res, next) => {
+  // console.log("Hello from MiddleWare 2");
+  // return res.end("Hey MW 2");
+  // return res.end(req.myUserName);
+  next();
+})
+
+
 
 // Routes
 
