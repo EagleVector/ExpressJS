@@ -58,10 +58,14 @@
 
 
 const express = require("express");
+const fs = require("fs");
 const users = require("./MOCK_DATA.json")
 
 const app = express();
 const PORT = 8000;
+
+// Middleware - Plugin
+app.use(express.urlencoded({ extended: false }));
 
 // Routes
 
@@ -98,8 +102,11 @@ app.get('/api/users', (req, res) => {
 // POST /users - Create new user
 
 app.post('/api/users', (req, res) => {
-  // TODO: Create new user
-  return res.json({status: "pending"})
+  const body = req.body;
+  users.push({...body, id: users.length + 1 });
+  fs.writeFile('./MOCK_DATA.json', JSON.stringify(users), (err, data) => {
+    return res.json({ status : "success", id: users.length });
+  });
 });
 
 // PATCH /users/1 - Edit the user with ID: 1 - Dynamic path params 
@@ -121,6 +128,8 @@ app.post('/api/users', (req, res) => {
 // We commonly have the route /api/users/:id in our get patch and delete route. 
 // We can combine them into one.
 
+// Testing APIs with Postman
+
 app
   .route('/api/users/:id')
   .get((req, res) => {
@@ -129,10 +138,31 @@ app
     return res.json(user);
   })
   .patch((req, res) => {
-    return res.json({status: "pending"})
+    const userId = Number(req.params.id);
+    const updatedUserData = req.body;
+
+    const user = users.find(user => user.id === userId);
+
+    user.first_name = updatedUserData.first_name;
+    user.last_name = updatedUserData.last_name;
+    user.email = updatedUserData.email;
+    user.gender = updatedUserData.gender;
+    user.job_title = updatedUserData.job_title;
+
+    fs.writeFile('./MOCK_DATA.json', JSON.stringify(users), (err, data) => {
+      return res.json({ status : "updated successfully", id: user.id });
+    });
   })
   .delete((req, res) => {
-    return res.json({status: "pending"})
+    const userId = Number(req.params.id);
+    delete users[userId - 1];
+
+    fs.writeFile('./MOCK_DATA.json', JSON.stringify(users), (err) => {
+      if (err) {
+        return 'error';
+      }
+      return res.json({ status : "deleted successfully"});
+    });
   });
 
 app.listen(PORT, console.log(`Server Started at PORT: ${PORT}`));
