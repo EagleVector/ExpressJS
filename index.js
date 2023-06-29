@@ -56,9 +56,83 @@
 // Rendering HTML data is very fast and this follows SSR (Server Side Rendering). methods -> res.send() & res.render()
 // Rendering JSON data is slow and it is rendered at clients end and thats why it is called CSR (Client Side Rendering). We will we doing its application in React. methods -> res.JSON() (automatically converts data into json form).
 
+
 const express = require("express");
+const users = require("./MOCK_DATA.json")
 
 const app = express();
 const PORT = 8000;
+
+// Routes
+
+// PROJECT
+
+// We will be creating a project which will be based on REST API that processes JSON Data. Operations:
+
+// GET /users - HTML Document Renderer
+
+app.get("/users", (req, res) => {
+  const html = `
+    <ul>
+      ${users.map((user) => `<li>${user.first_name} ${user.last_name}</li>`).join("")};
+    </ul>
+  `;
+  res.send(html);
+});
+
+// GET /api/users - List all the users
+
+app.get('/api/users', (req, res) => {
+  return res.json(users);
+});
+
+// GET /users/1 - Get the user with ID: 1 - Dynamic Path params - GET /api/users/:id
+// GET /users/2 - Get the user with ID: 2 - Dynamic Path params
+
+// app.get("/api/users/:id", (req, res) => {
+//   const id = Number(req.params.id);
+//   const user = users.find((user) => user.id === id);
+//   return res.json(user);
+// });
+
+// POST /users - Create new user
+
+app.post('/api/users', (req, res) => {
+  // TODO: Create new user
+  return res.json({status: "pending"})
+});
+
+// PATCH /users/1 - Edit the user with ID: 1 - Dynamic path params 
+// PATCH /users/2 - Edit the user with ID: 2 - Dynamic path params 
+
+// app.patch('/api/users/:id', (req, res) => {
+//   // TODO: Edit user with user id
+//   return res.json({status: "pending"})
+// });
+
+// DELETE /users/1 - Delete the user with ID: 1
+
+// app.delete('/api/users/:id', (req, res) => {
+//   // TODO: Delete user with user id
+//   return res.json({status: "pending"})
+// });
+
+// Handling multiple methods through a single route: 
+// We commonly have the route /api/users/:id in our get patch and delete route. 
+// We can combine them into one.
+
+app
+  .route('/api/users/:id')
+  .get((req, res) => {
+    const id = Number(req.params.id);
+    const user = users.find((user) => user.id === id);
+    return res.json(user);
+  })
+  .patch((req, res) => {
+    return res.json({status: "pending"})
+  })
+  .delete((req, res) => {
+    return res.json({status: "pending"})
+  });
 
 app.listen(PORT, console.log(`Server Started at PORT: ${PORT}`));
