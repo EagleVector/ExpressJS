@@ -55,3 +55,7 @@
 1688125345499 : ::1 : DELETE : /api/users/649ebcdcba0ddda868062f19
 1688125370342 : ::1 : GET : /api/users
 1688125384886 : ::1 : DELETE : /api/users/649ebb9f4080ee7eb81cf99b
+1688125898321 : ::1 : GET : /users
+1688125913618 : ::1 : GET : /users
+1688125913654 : ::1 : GET : /favicon.ico
+1688125917521 : ::1 : GET : /users
