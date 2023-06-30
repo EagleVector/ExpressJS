@@ -110,6 +110,10 @@ app.get("/users", (req, res) => {
 // GET /api/users - List all the users
 
 app.get('/api/users', (req, res) => {
+  // Custom Headers
+  // res.setHeader('X-myName', 'Cherry');
+  // Always add X to custom headers - Best practise
+  // console.log(req.headers);
   return res.json(users);
 });
 
@@ -126,9 +130,12 @@ app.get('/api/users', (req, res) => {
 
 app.post('/api/users', (req, res) => {
   const body = req.body;
+  if((!body) || (!body.first_name) || (!body.last_name) || (!body.email) || (!body.job_title) || (!body.gender)) {
+    res.status(400).json({ error : "Please enter the req fields"});
+  }
   users.push({...body, id: users.length + 1 });
   fs.writeFile('./MOCK_DATA.json', JSON.stringify(users), (err, data) => {
-    return res.json({ status : "success", id: users.length });
+    return res.status(201).json({ status : "success", id: users.length });
   });
 });
 
@@ -157,6 +164,9 @@ app
   .route('/api/users/:id')
   .get((req, res) => {
     const id = Number(req.params.id);
+    if (id > 1010) {
+      res.status(404).json ({ msg : "Out of bound" });
+    }
     const user = users.find((user) => user.id === id);
     return res.json(user);
   })
@@ -184,8 +194,20 @@ app
       if (err) {
         return 'error';
       }
-      return res.json({ status : "deleted successfully"});
+      return res.status(204).json({ status : "deleted successfully"});
     });
   });
 
 app.listen(PORT, console.log(`Server Started at PORT: ${PORT}`));
+
+// HTTP HEADERS
+// Headers are the additional info that we send or receive along with our request or response
+// Its the meta data -> data about the data
+// We can send custom headers as well
+
+// HTTP response status codes
+// 1. Informational Response (100 - 199)
+// 2. Successful Response (200 - 299)
+// 3. Redirect Messages (300 - 399)
+// 4. Clint Side Error (400 - 499)
+// 5. Server Side Error (500 - 599)
